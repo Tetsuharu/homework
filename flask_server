@@ -1,0 +1,62 @@
+# -*- coding=utf-8 -*-
+from flask import Flask, request, Response
+import json
+import os
+import base64
+
+node = Flask(__name__)
+# 打开Debug
+node.debug = True
+
+upload_file_dir = './server_upload_file_dir/'
+download_file_dir = './server_download_file_dir/'
+
+# POST实现JSON RPC
+@node.route('/<rpc_func>', methods=['POST'])
+def rpc(rpc_func):
+    # 提取POST请求数据中的JSON数据
+    client_post_data = request.json
+    if rpc_func == 'cmd':
+        try:
+            client_function = client_post_data.get('cmd')
+            return_cmd = os.popen(client_function).read()
+            return {'exec_cmd': return_cmd}
+
+        except Exception as e:
+            print(e)
+        pass
+
+    elif rpc_func == 'upload':
+        try:
+            filename = client_post_data.get('filename')
+            # client_file = client_post_data.get('upload')
+            # f1 = base64.b64decode(client_file.encode())
+            # f2 = f1.decode()
+            # with open(upload_file_dir + filename, 'w') as f3:
+            #     f3.write(f2)
+            return {'message': 'Upload Success!', 'upload_file': filename}
+
+        except Exception as e:
+            print(e)
+            pass
+
+    elif rpc_func == 'download':
+        try:
+            filename = client_post_data.get('filename')
+            if os.path.exists(download_file_dir + filename) is not True:
+                return {'result': 'download file not exist'}
+            else:
+                f1 = open(download_file_dir + filename, 'rb')
+                f2 = base64.b64encode(f1.read())
+                f3 = f2.decode()
+                return {'result': filename + '下载成功', 'down_file': f3}
+        except Exception as e:
+            print(e)
+            pass
+    else:
+        return {'exec_cmd': 'no cmd in json'}
+
+if __name__ == "__main__":
+    # 运行Flask在host='192.168.1.200', port=8080
+    # 在linux上可以使用'0.0.0.0'
+    node.run(host='0.0.0.0', port=8080)
