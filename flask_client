@@ -1,0 +1,79 @@
+# -*- coding=utf-8 -*-
+import requests
+import base64
+
+# # 响应为文本
+# request_result = requests.post('http://192.168.31.173:8080/form', data={'name': 'collinsctk', 'age': 40})
+#
+# print(request_result.text)
+#
+# 响应为JSON
+# request_result = requests.post('http://192.168.31.173:8080/rpc_function', json={'function': 'datetime'})
+#
+# print(request_result.json())
+#
+# request_result = requests.post('http://192.168.31.173:8080/rpc_function', json={'function': 'date'})
+#
+# print(request_result.json())
+#
+# request_result = requests.post('http://192.168.31.173:8080/rpc_function', json={'function': 'other'})
+#
+# print(request_result.json())
+#
+# request_result = requests.post('http://192.168.31.173:8080/rpc_function', json={'other': 'other'})
+#
+# print(request_result.json())
+#
+# request_result = requests.post('http://192.168.31.173:8080/rpc_function')
+#
+# print(request_result.json())
+#
+
+
+# homework
+server_ip = '192.168.31.173'
+server_port = '8080'
+base_url = 'http://' + server_ip + ':' + server_port + '/'
+exec_cmd_url = base_url + 'cmd'
+upload_url = base_url + 'upload'
+download_url = base_url + 'download'
+
+upload_file_dir = './client_upload_file_dir/'
+download_file_dir = './client_download_file_dir/'
+
+
+def json_rpc_client_exec_cmd(exec_cmd):
+    send_url = list(exec_cmd.keys())[0]
+    exec_cmd_url = base_url + send_url
+    request_result = requests.post(exec_cmd_url, json=exec_cmd)
+    return request_result.json()['exec_cmd']
+
+def json_rpc_client_upload(filename):
+    f1 = open(upload_file_dir + filename, 'rb')
+    f2 = base64.b64encode(f1.read())
+    f3 = f2.decode()
+    file_up = {'upload': f3, 'filename': filename}
+    request_result = requests.post(upload_url, json=file_up)
+    return request_result.json()
+
+def json_rpc_client_download(filename):
+    file_down = {'download': filename}
+    request_result = requests.post(download_url, json=file_down)
+    filedata = request_result.json()['down_file']
+    f1 = base64.b64decode((filedata.encode()))
+    f2 = f1.decode()
+    with open(download_file_dir + filename, 'w') as f3:
+        f3.write(f2)
+    return request_result.json()['result']
+
+
+if __name__ == '__main__':
+    # exec_cmd = {'cmd': 'ipconfig'}
+    # print(json_rpc_client_exec_cmd(exec_cmd))
+    # exec_cmd = {'cmd': 'pwd1'}
+    # print(json_rpc_client_exec_cmd(exec_cmd))
+    # exec_cmd = {'cmd1': 'pwd'}
+    # print(json_rpc_client_exec_cmd(exec_cmd))
+    # print(json_rpc_client_upload('logo.jpg'))
+    print(json_rpc_client_download('logo.jpg'))
+    # print(json_rpc_client_download('logo1.jpg'))
