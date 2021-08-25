@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complex</title>
+</head>
+<body>
+    {# 提取字典的键 #}
+    <h1>{{ complex_dict.dict_key }}</h1>
+    {# 基于index提取列表内容 #}
+    <h1>{{ complex_list.0 }}</h1>
+    <h1>{{ complex_list.1 }}</h1>
+    {# for循环迭代列表内容 #}
+    {% for item in complex_list %}
+        {% if item == 'list1' %}
+            <h1>{{ item | upper }}</h1>
+        {% else %}
+            <h3>{{ item }}</h3>
+        {% endif %}
+    {% endfor %}
+
+</body>
+</html>
