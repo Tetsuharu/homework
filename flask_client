@@ -59,12 +59,15 @@ def json_rpc_client_upload(filename):
 def json_rpc_client_download(filename):
     file_down = {'download': filename}
     request_result = requests.post(download_url, json=file_down)
-    filedata = request_result.json()['down_file']
-    f1 = base64.b64decode((filedata.encode()))
-    f2 = f1.decode()
-    with open(download_file_dir + filename, 'w') as f3:
-        f3.write(f2)
-    return request_result.json()['result']
+    try:
+        filedata = request_result.json()['down_file']
+        f1 = filedata.encode()
+        f2 = base64.b64decode(f1)
+        with open(download_file_dir + filename, 'w') as f3:
+            f3.write(f2)
+        return request_result.json()['result']
+     except:
+        return request_result.json()['result']
 
 
 if __name__ == '__main__':
