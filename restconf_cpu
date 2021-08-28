@@ -1,8 +1,21 @@
 from devnet_api.ios_xe_restconf.restconf_0_core_info import client, username, password, csr1_ip, csr2_ip, headers
 from requests.auth import HTTPBasicAuth
 import urllib3
-
+import requests
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+client = requests.session()
+
+username = "admin"
+password = "Cisc0123"
+
+csr1_ip = "192.168.1.1"
+csr2_ip = "192.168.1.2"
+
+headers = {'Accept': 'application/yang-data+json', 'Content-Type': 'application/yang-data+json'}
+
+
 
 
 def csr_monitor_cpu(device_ip, username, password, monitor_type='5s'):
