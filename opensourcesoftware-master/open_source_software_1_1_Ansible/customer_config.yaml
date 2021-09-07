@@ -1,0 +1,19 @@
+asa_ifs:
+- {ip: 202.100.1.254, mask: 255.255.255.0, nameif: Outside, port: GigabitEthernet0/0}
+- {ip: 10.1.1.254, mask: 255.255.255.0, nameif: Inside, port: GigabitEthernet0/1}
+asa_nat_hosts:
+- {dst_host: 202.100.1.100, dst_if: Outside, dst_port: 80, host_name: Apache, protocol: tcp,
+  src_host: 10.1.1.100, src_if: Inside, src_port: 80}
+csr_ifs:
+- {ip: 137.78.5.254/24, port: GigabitEthernet1, router: 192.168.1.1}
+- {ip: 61.128.1.254/24, port: GigabitEthernet2, router: 192.168.1.1}
+- {ip: 61.128.1.1/24, port: GigabitEthernet1, router: 192.168.1.2}
+- {ip: 202.100.1.1/24, port: GigabitEthernet2, router: 192.168.1.2}
+csr_ospf_nets:
+- {area: 0, mask: 0.0.0.255, network: 137.78.5.0, router: 192.168.1.1}
+- {area: 0, mask: 0.0.0.255, network: 61.128.1.0, router: 192.168.1.1}
+- {area: 0, mask: 0.0.0.255, network: 61.128.1.0, router: 192.168.1.2}
+- {area: 0, mask: 0.0.0.255, network: 202.100.1.0, router: 192.168.1.2}
+csr_ospf_router_id:
+- {router: 192.168.1.1, routerid: 1.1.1.1}
+- {router: 192.168.1.2, routerid: 2.2.2.2}

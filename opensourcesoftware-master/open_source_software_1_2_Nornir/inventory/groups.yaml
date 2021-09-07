@@ -1,0 +1,5 @@
+cisco_ios:
+    platform: cisco_ios # 完全是netmiko的device_type
+
+cisco_asa:
+    platform: cisco_asa

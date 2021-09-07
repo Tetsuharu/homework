@@ -1,0 +1,29 @@
+---
+- hosts: CSR  # playbook操作的设备
+  gather_facts: false  # 并不搜集这些主机的信息
+  connection: local  # 本地发起连接
+  vars_files:
+    - mail_creds.yaml  # 导入邮件账号
+
+  tasks:
+    - name: Check config change  # 任务名字
+      ios_config:  # 模块名字
+        diff_against: intended  # 检查配置修改
+        # 之前备份的配置文件
+        intended_config: "{{ lookup('file', 'backup/{{inventory_hostname}}.cfg') }}"
+      # 注册时状态到config_change  
+      register: config_change
+
+    - name: Mail Changed  # 任务名字
+      mail:  # 模块名字
+        host: smtp.qq.com  # 邮件SMTP服务器地址
+        port: 465  # 邮件SMTP服务器端口号
+        username: "{{ mail }}"  # 登录邮件服务器用户名
+        password: "{{ mailpass }}"  # 登录邮件服务器密码
+        to: QINKE <collinsctk@qytang.com>  # 收件者
+        from: 3348326959@qq.com  # 发件者
+        subject: Ansible-report  # 主题
+        body: "{{ inventory_hostname }} has changed"  # 正文
+      delegate_to: localhost
+      when: config_change.changed  # 当配置修改时发送邮件
+...
